@@ -19,12 +19,19 @@
 ck-status                 # what's connected
 ck-doctor                 # health check
 ck-send <file>            # to phone
-ck-mirror                 # mirror (requires earlier wireless-adb pairing)
-ck-mirror --pair IP:PORT  # first-time wireless pairing (code on phone screen)
-ck-mirror --connect IP:PORT
-ck-mirror --kill          # stop adb server when done
+ck-mirror                 # mirror the phone (auto-picks device; wireless preferred)
+ck-mirror --setup-usb     # after a phone reboot: plug USB once, restores fixed wireless port 5555
+ck-mirror --doctor        # show adb state
+ck-mirror --kill          # stop adb server when done (hygiene)
 localsend-cli -f <file>   # TUI: pick the target device by number
 ```
+
+## Screen mirroring notes
+- The phone is set to a **fixed wireless adb port (5555)** so no pairing/port dance is needed.
+- After the phone **reboots** the fixed port is gone once: plug the USB cable, run
+  `ck-mirror --setup-usb`, unplug. (USB debugging must stay enabled on the phone.)
+- If USB is unavailable, the fallback is Wireless debugging → read the port → `ck-mirror --connect IP:PORT`.
+- `ck-mirror --kill` stops the local adb server when you are done (recommended on untrusted networks).
 
 ## Weekly/monthly maintenance
 1. `sudo pacman -Syu` + update the 3 Android apps (F-Droid).

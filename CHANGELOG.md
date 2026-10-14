@@ -28,4 +28,6 @@
   storage (6,046 files / ~6.9 GB, 6,046 pull errors). Transfer stopped, nothing deleted.
   Fix deferred by user: recreate folder pair with dedicated `Sync/continuity` path
 - AT-11 blocked: stale wireless-debug port (rotates); requires fresh pairing-dialog values
+- Mirror pipeline completed: USB → `adb tcpip 5555` → wireless mirror running; `ck-mirror`
+  now prefers the wireless device and gained `--setup-usb` for post-reboot recovery
 

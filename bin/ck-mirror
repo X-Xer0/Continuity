@@ -2,8 +2,9 @@
 # ck-mirror — scrcpy wrapper for wireless mirroring of the phone.
 # Usage:
 #   ck-mirror                    mirror the single connected device (video only)
-#   ck-mirror --pair IP:PORT     pair using the code from the phone's wireless-debug screen
+#   ck-mirror --pair IP:PORT [CODE]  pair using the code from the phone's wireless-debug screen
 #   ck-mirror --connect IP:PORT  connect over Wi-Fi
+#   ck-mirror --setup-usb        one-shot: switch USB-connected phone to fixed wireless port 5555
 #   ck-mirror --doctor           show adb device state
 #   ck-mirror --kill             stop the adb server
 #   ck-mirror --audio            enable audio forwarding
@@ -32,6 +33,17 @@ while (($#)); do
       [[ $# -ge 1 ]] || { echo "ck-mirror: --connect needs IP:PORT" >&2; exit 2; }
       adb connect "$1"
       exit 0 ;;
+    --setup-usb)
+      shift
+      usb="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" && $1 !~ /:/ {print $1; exit}')"
+      [[ -n "$usb" ]] || { echo "ck-mirror: no USB device in 'device' state (enable USB debugging, replug cable)" >&2; exit 2; }
+      ip="$(adb -s "$usb" shell ip -4 addr show wlan0 2>/dev/null | awk '/inet /{print $2}' | cut -d/ -f1 | head -1)"
+      [[ -n "$ip" ]] || { echo "ck-mirror: could not read phone wlan0 IP" >&2; exit 2; }
+      echo "USB device: $usb | phone wlan0 IP: $ip"
+      adb -s "$usb" tcpip 5555
+      sleep 2
+      adb connect "$ip:5555"
+      exit 0 ;;
     --doctor) adb devices -l; exit 0 ;;
     --kill)   adb kill-server; echo "adb server stopped"; exit 0 ;;
     --audio)  audio=1; shift ;;
@@ -40,7 +52,17 @@ while (($#)); do
   esac
 done
 
-state="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')"
+mapfile -t devs < <(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}')
+state=""
+if ((${#devs[@]} == 1)); then
+  state="${devs[0]}"
+elif ((${#devs[@]} > 1)); then
+  # prefer the wireless (host:port) entry when both USB and TCP are attached
+  for d in "${devs[@]}"; do
+    if [[ "$d" == *:* ]]; then state="$d"; break; fi
+  done
+  [[ -z "$state" ]] && state="${devs[0]}"
+fi
 if [[ -z "$state" ]]; then
   cat >&2 <<'EOF'
 ck-mirror: no device connected over adb.
@@ -55,4 +77,4 @@ fi
 
 args=(--max-size=1920 --max-fps=60)
 ((audio)) || args+=(--no-audio)
-exec scrcpy "${args[@]}" "${scrcpy_args[@]}"
+exec scrcpy -s "$state" "${args[@]}" "${scrcpy_args[@]}"

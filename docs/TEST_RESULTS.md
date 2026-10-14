@@ -19,12 +19,13 @@ Legend: [M] machine-verified with pasted output · [U] user-confirmed on-device 
 | AT-08 clipboard phone→laptop | PARTIAL [U] | user reported working; definitive re-test pending |
 | AT-09 notifications / SMS | PASS [U] | user reported working; `kdeconnect-cli --list-notifications` responds (exit 0) |
 | AT-10 run command | PASS [U] | user reported "Phone says hi" flow working; allowlist = exactly 2 safe commands |
-| AT-11 screen mirror | BLOCKED [M] | `adb connect 192.0.2.25:42067` → "Connection refused" (port rotated); needs fresh pairing-dialog values |
+| AT-11 screen mirror | PASS [M] | USB authorized (`REDACTED` RMX1971) → `adb tcpip 5555` → `adb connect 192.0.2.25:5555 device`; scrcpy window "RMX1971" mapped (class=scrcpy), server running; visual confirmation by user requested |
 | AT-12 Syncthing | PAUSED (by user request) | see note below |
 | AT-13 doctor | PASS [M] | `ck-doctor` → 9 ok, 0 warn, 0 fail, exit 0 |
 | AT-14 reboot persistence | PENDING | to run after AT-11/12 close |
 | RESTORE | PASS [M] | `--restore 20261014-164909` reverted hyprland.conf + waybar config; `--apply` re-integrated; waybar alive, doctor 9/9 |
 | FOLDER MIGRATION | PASS [M] | receive folder moved `~/Downloads/continuity` → `~/continuity`; kdeconnect `incoming_path` and LocalSend destination updated + verified live |
+| ADB FIXED PORT | PASS [M] | USB → `tcpip 5555` → wireless `192.0.2.25:5555 device`; `ck-mirror --setup-usb` added for post-reboot recovery; direct wireless-debug pairing also proven (GUI: adb-REDACTED) |
 
 ## AT-12 note (why paused)
 The phone accepted the Syncthing folder offer but pointed it at its **entire internal
@@ -36,8 +37,7 @@ recreate with a dedicated path (laptop `~/Sync/continuity` ⇄ phone `Sync/conti
 then resume. User said "leave Syncthing for now" — deferred by choice.
 
 ## Remaining before v1.0.0 tag
-1. AT-11: fresh pairing dialog values (pairing port + 6-digit code + connect port) →
-   `ck-mirror --pair` + `--connect` + mirror test.
-2. AT-12: recreate syncthing folder with dedicated path (deferred by user).
-3. AT-08 definitive clipboard re-test (copy on phone → `wl-paste`).
-4. AT-14 reboot spot-check.
+1. ~~AT-11: mirror~~ DONE — user visual confirmation pending (window mapped, server running)
+2. AT-12: recreate syncthing folder with dedicated path (deferred by user)
+3. AT-08 definitive clipboard re-test (copy on phone → `wl-paste`)
+4. AT-14 reboot spot-check (mirror recovery = `ck-mirror --setup-usb` after reboot)
