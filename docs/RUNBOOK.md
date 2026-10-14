@@ -19,7 +19,9 @@
 ck-status                 # what's connected
 ck-doctor                 # health check
 ck-send <file>            # to phone
-ck-mirror                 # mirror the phone (auto-picks device; wireless preferred)
+ck-mirror                 # mirror the phone (USB if cable attached, else Wi-Fi)
+ck-mirror --usb           # force USB transport (best latency)
+ck-mirror --wifi          # force Wi-Fi transport
 ck-mirror --setup-usb     # after a phone reboot: plug USB once, restores fixed wireless port 5555
 ck-mirror --doctor        # show adb state
 ck-mirror --kill          # stop adb server when done (hygiene)
@@ -27,7 +29,9 @@ localsend-cli -f <file>   # TUI: pick the target device by number
 ```
 
 ## Screen mirroring notes
-- The phone is set to a **fixed wireless adb port (5555)** so no pairing/port dance is needed.
+- **USB is preferred automatically** when the cable is attached (lower latency, no network jitter);
+  `ck-mirror --wifi` forces the wireless path.
+- The phone is also set to a **fixed wireless adb port (5555)** so no pairing/port dance is needed.
 - After the phone **reboots** the fixed port is gone once: plug the USB cable, run
   `ck-mirror --setup-usb`, unplug. (USB debugging must stay enabled on the phone.)
 - If USB is unavailable, the fallback is Wireless debugging → read the port → `ck-mirror --connect IP:PORT`.

@@ -16,10 +16,11 @@ Legend: [M] machine-verified with pasted output · [U] user-confirmed on-device 
 | AT-05 phone→laptop file | PASS [M] | `~/continuity/`: `continuity-test.txt` (51 B) + `Screenshot_...jpg` (542 KB) received from phone |
 | AT-06 LocalSend | PARTIAL [M+U] | small-file transfers confirmed; 100 MB stress test not run |
 | AT-07 clipboard laptop→phone | PASS [U] | user reported working (ck-menu → "Send clipboard to phone") |
-| AT-08 clipboard phone→laptop | PARTIAL [U] | user reported working; definitive re-test pending |
+| AT-08 clipboard phone→laptop | PASS [U] | user confirmed after full workflow |
 | AT-09 notifications / SMS | PASS [U] | user reported working; `kdeconnect-cli --list-notifications` responds (exit 0) |
 | AT-10 run command | PASS [U] | user reported "Phone says hi" flow working; allowlist = exactly 2 safe commands |
-| AT-11 screen mirror | PASS [M] | USB authorized (`REDACTED` RMX1971) → `adb tcpip 5555` → `adb connect 192.0.2.25:5555 device`; scrcpy window "RMX1971" mapped (class=scrcpy), server running; visual confirmation by user requested |
+| AT-11 screen mirror (Wi-Fi) | PASS [M+U] | wireless `adb connect` → scrcpy window "RMX1971" mapped (class=scrcpy); user confirmed working |
+| AT-11b screen mirror (USB) | PASS [M+U] | `ck-mirror --usb` → `scrcpy -s <usb-serial>`; window mapped; switched live from Wi-Fi session; user confirmed |
 | AT-12 Syncthing | PAUSED (by user request) | see note below |
 | AT-13 doctor | PASS [M] | `ck-doctor` → 9 ok, 0 warn, 0 fail, exit 0 |
 | AT-14 reboot persistence | PENDING | to run after AT-11/12 close |
@@ -37,7 +38,5 @@ recreate with a dedicated path (laptop `~/Sync/continuity` ⇄ phone `Sync/conti
 then resume. User said "leave Syncthing for now" — deferred by choice.
 
 ## Remaining before v1.0.0 tag
-1. ~~AT-11: mirror~~ DONE — user visual confirmation pending (window mapped, server running)
-2. AT-12: recreate syncthing folder with dedicated path (deferred by user)
-3. AT-08 definitive clipboard re-test (copy on phone → `wl-paste`)
-4. AT-14 reboot spot-check (mirror recovery = `ck-mirror --setup-usb` after reboot)
+1. AT-12: recreate syncthing folder with dedicated path (deferred by user — see note above)
+2. AT-14 reboot spot-check (mirror recovery after reboot = `ck-mirror --setup-usb`)

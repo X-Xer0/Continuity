@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# ck-mirror — scrcpy wrapper for wireless mirroring of the phone.
+# ck-mirror — scrcpy wrapper for mirroring the phone (USB or Wi-Fi).
 # Usage:
-#   ck-mirror                    mirror the single connected device (video only)
+#   ck-mirror                    mirror the phone (prefers USB if cable attached, else Wi-Fi)
+#   ck-mirror --usb              force USB transport (cable + USB debugging required)
+#   ck-mirror --wifi             force Wi-Fi transport
 #   ck-mirror --pair IP:PORT [CODE]  pair using the code from the phone's wireless-debug screen
 #   ck-mirror --connect IP:PORT  connect over Wi-Fi
 #   ck-mirror --setup-usb        one-shot: switch USB-connected phone to fixed wireless port 5555
@@ -15,6 +17,7 @@ command -v adb >/dev/null 2>&1   || { echo "ck-mirror: adb missing (pacman -S an
 command -v scrcpy >/dev/null 2>&1 || { echo "ck-mirror: scrcpy missing" >&2; exit 1; }
 
 audio=0
+force=""
 declare -a scrcpy_args=()
 while (($#)); do
   case "$1" in
@@ -46,31 +49,35 @@ while (($#)); do
       exit 0 ;;
     --doctor) adb devices -l; exit 0 ;;
     --kill)   adb kill-server; echo "adb server stopped"; exit 0 ;;
+    --usb)    force=usb; shift ;;
+    --wifi)   force=wifi; shift ;;
     --audio)  audio=1; shift ;;
-    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
     *) scrcpy_args+=("$1"); shift ;;
   esac
 done
 
 mapfile -t devs < <(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}')
 state=""
-if ((${#devs[@]} == 1)); then
-  state="${devs[0]}"
-elif ((${#devs[@]} > 1)); then
-  # prefer the wireless (host:port) entry when both USB and TCP are attached
-  for d in "${devs[@]}"; do
-    if [[ "$d" == *:* ]]; then state="$d"; break; fi
-  done
-  [[ -z "$state" ]] && state="${devs[0]}"
+if [[ "$force" == usb ]]; then
+  for d in "${devs[@]}"; do [[ "$d" != *:* ]] && { state="$d"; break; }; done
+elif [[ "$force" == wifi ]]; then
+  for d in "${devs[@]}"; do [[ "$d" == *:* ]] && { state="$d"; break; }; done
+else
+  # default: prefer USB (lower latency), fall back to Wi-Fi
+  for d in "${devs[@]}"; do [[ "$d" != *:* ]] && { state="$d"; break; }; done
+  if [[ -z "$state" ]]; then
+    for d in "${devs[@]}"; do [[ "$d" == *:* ]] && { state="$d"; break; }; done
+  fi
 fi
 if [[ -z "$state" ]]; then
   cat >&2 <<'EOF'
-ck-mirror: no device connected over adb.
-  Phone: Settings -> Developer options -> Wireless debugging -> ON
-  First time: tap "Pair device with pairing code", then run:
-      ck-mirror --pair <IP:PAIR_PORT>
-  Then run:
-      ck-mirror --connect <IP:PORT>    (IP:PORT shown on the wireless-debug screen)
+ck-mirror: no usable adb device.
+  USB:   plug the cable, enable USB debugging on the phone, then:  ck-mirror --usb
+  Wi-Fi: Wireless debugging ON, then:
+           ck-mirror --pair <IP:PAIR_PORT> <CODE>     (first time)
+           ck-mirror --connect <IP:PORT>
+         after a phone reboot: plug USB once and run:  ck-mirror --setup-usb
 EOF
   exit 2
 fi

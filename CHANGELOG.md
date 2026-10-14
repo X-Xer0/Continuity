@@ -31,3 +31,9 @@
 - Mirror pipeline completed: USB → `adb tcpip 5555` → wireless mirror running; `ck-mirror`
   now prefers the wireless device and gained `--setup-usb` for post-reboot recovery
 
+### Wrapped — 2026-10-14 (v0.9.1)
+- USB mirroring: `ck-mirror --usb` / `--wifi`; USB is now preferred automatically when the
+  cable is attached; live session switched from Wi-Fi to USB
+- Repo scrubbed of local IPs / device serials before the public push
+- Pushed to `github.com:X-Xer0/Continuity` (main + tag v0.9.1)
+
