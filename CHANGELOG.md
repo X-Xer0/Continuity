@@ -13,3 +13,10 @@
 - Phase 09: `ck-menu`, `ck-status`, `ck-doctor`, `ck-send`, `ck-mirror` live in `~/.local/bin`
 - Phase 11 (partial): safe uninstall helper, security/runbook/capability/troubleshooting docs
 - Syncthing user service enabled and active; device ID available via `syncthing device-id`
+
+### Verified live — 2026-10-14 (phone steps done)
+- KDE Connect paired with "realme 5Pro"; protocol version 8 (AT-01)
+- ping, ring, and a test file share to the phone executed (AT-02/03/04)
+- Runcommand allowlist deployed (2 safe commands); share incoming_path -> `~/Downloads/continuity`
+- LocalSend: quick_save on, destination `~/Downloads/continuity`, tray-minimize, `--hidden` autostart
+- Syncthing: phone connected; folder `continuity` (`~/Sync/continuity`, sendreceive) shared — pending phone acceptance

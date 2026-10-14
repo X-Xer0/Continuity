@@ -17,10 +17,20 @@ audio=0
 declare -a scrcpy_args=()
 while (($#)); do
   case "$1" in
-    --pair|--connect)
-      sub="$1"; shift
-      [[ $# -ge 1 ]] || { echo "ck-mirror: $sub needs IP:PORT" >&2; exit 2; }
-      if [[ "$sub" == "--pair" ]]; then adb pair "$1"; else adb connect "$1"; fi
+    --pair)
+      shift
+      [[ $# -ge 1 ]] || { echo "ck-mirror: --pair needs IP:PORT [CODE]" >&2; exit 2; }
+      ip="$1"; shift
+      if [[ $# -ge 1 && "$1" != --* ]]; then
+        adb pair "$ip" "$1"
+      else
+        adb pair "$ip"
+      fi
+      exit 0 ;;
+    --connect)
+      shift
+      [[ $# -ge 1 ]] || { echo "ck-mirror: --connect needs IP:PORT" >&2; exit 2; }
+      adb connect "$1"
       exit 0 ;;
     --doctor) adb devices -l; exit 0 ;;
     --kill)   adb kill-server; echo "adb server stopped"; exit 0 ;;

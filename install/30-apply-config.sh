@@ -172,6 +172,78 @@ PY
   fi
 fi
 
+# ---------- 4. kdeconnect per-device config ----------
+say
+say "== 4. kdeconnect device config =="
+if ! command -v kdeconnect-cli >/dev/null 2>&1; then
+  say "WARN: kdeconnect-cli not found; skipping"
+else
+  mapfile -t dev_ids < <(kdeconnect-cli -l --id-only 2>/dev/null || true)
+  if ((${#dev_ids[@]} == 0)); then
+    say "no paired devices yet; re-run after pairing (android/CHECKLIST.md)"
+  fi
+  for id in "${dev_ids[@]}"; do
+    share_dir="$HOME/.config/kdeconnect/$id/kdeconnect_share"
+    share_cfg="$share_dir/config"
+    want="[General]
+incoming_path=$HOME/Downloads/continuity"
+    if [[ -f "$share_cfg" ]] && [[ "$(cat "$share_cfg")" == "$want" ]]; then
+      say "ok (already current): $share_cfg"
+    else
+      say "would install: $share_cfg"
+      backup "$share_cfg"
+      if [[ "$MODE" == apply ]]; then
+        mkdir -p "$share_dir" "$HOME/Downloads/continuity"
+        printf '%s\n' "$want" > "$share_cfg"
+        changed=1
+      fi
+    fi
+
+    rc_dir="$HOME/.config/kdeconnect/$id/kdeconnect_runcommand"
+    rc_cfg="$rc_dir/config"
+    if cmp -s "$REPO/configs/kdeconnect/runcommand-config" "$rc_cfg" 2>/dev/null; then
+      say "ok (already current): $rc_cfg"
+    else
+      say "would install: $rc_cfg (safe command allowlist)"
+      backup "$rc_cfg"
+      if [[ "$MODE" == apply ]]; then
+        mkdir -p "$rc_dir"
+        cp "$REPO/configs/kdeconnect/runcommand-config" "$rc_cfg"
+        changed=1
+      fi
+    fi
+  done
+fi
+
+# ---------- 5. localsend preferences ----------
+say
+say "== 5. localsend preferences =="
+LS_PREF="$HOME/.local/share/org.localsend.localsend_app/shared_preferences.json"
+if [[ ! -f "$LS_PREF" ]]; then
+  say "WARN: $LS_PREF not found (launch LocalSend once, then re-run); skipping"
+else
+  say "would set: quick_save=true, destination=$HOME/Downloads/continuity, minimize_to_tray=true"
+  backup "$LS_PREF"
+  if [[ "$MODE" == apply ]]; then
+    out="$(python3 - "$LS_PREF" <<'PY'
+import json, pathlib, sys
+p = pathlib.Path(sys.argv[1])
+d = json.loads(p.read_text())
+before = {k: d.get(k) for k in ("flutter.ls_quick_save", "flutter.ls_destination", "flutter.ls_minimize_to_tray")}
+d["flutter.ls_quick_save"] = True
+d["flutter.ls_destination"] = str(pathlib.Path.home() / "Downloads/continuity")
+d["flutter.ls_minimize_to_tray"] = True
+p.write_text(json.dumps(d, indent=4))
+after = {k: d.get(k) for k in before}
+print(("changed" if before != after else "no change needed") + f": {after}")
+PY
+)"
+    say "$out"
+    [[ "$out" == changed* ]] && changed=1
+    say "note: restart LocalSend if it is running (it rewrites prefs on exit)"
+  fi
+fi
+
 say
 if [[ "$MODE" == dry ]]; then
   say "dry-run complete. Re-run with --apply to make changes."
