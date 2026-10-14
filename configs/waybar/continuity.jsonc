@@ -1,0 +1,11 @@
+{
+"custom/continuity": {
+	"format": "{}",
+	"exec": "$HOME/.local/bin/ck-status --waybar",
+	"interval": 10,
+	"return-type": "json",
+	"tooltip": true,
+	"on-click": "$HOME/.local/bin/ck-menu",
+	"on-click-right": "$HOME/.local/bin/ck-doctor --notify",
+},
+}

@@ -1,0 +1,14 @@
+/* continuity-kit — optional waybar styling for #custom/continuity
+ * Append to ~/.config/waybar/style.css (not applied automatically).
+ */
+#custom/continuity {
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #b8c4e0;
+}
+#custom/continuity.on {
+  color: #7ec87e;
+}
+#custom/continuity.off {
+  color: #7a7a7a;
+}
