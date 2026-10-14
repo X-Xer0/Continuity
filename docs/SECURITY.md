@@ -14,8 +14,8 @@ Threat model: trusted home LAN. Nothing here is safe on hostile networks.
 - Runcommand allowlist is implemented in `configs/kdeconnect/runcommand-config` and deployed
   by `install/30-apply-config.sh` (step 4): exactly two non-destructive commands
   (`notify-send`, `hyprctl notify`). No suspend/reboot/rm/sudo commands.
-- Incoming file shares land in `~/Downloads/continuity` (kdeconnect_share `incoming_path`).
-- LocalSend: Quick Save on + destination `~/Downloads/continuity` + PIN on phone.
+- Incoming file shares land in `~/continuity` (kdeconnect_share `incoming_path`).
+- LocalSend: Quick Save on + destination `~/continuity` + PIN on phone.
 - No secrets in the repo: no device IDs, ADB keys, IPs, SMS content. `.gitignore` covers logs/backups.
 - ADB hygiene: `ck-mirror --kill` after mirroring; Wireless debugging off when idle;
   never expose port 5555 beyond the LAN.

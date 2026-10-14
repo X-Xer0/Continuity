@@ -37,7 +37,7 @@ For EACH of the three apps:
 ## 6. LocalSend
 - Open on both devices; they discover each other automatically.
 - Phone: set a clear device name; enable PIN if offered.
-- Laptop: save folder = `~/Downloads/continuity`, Quick Save = on.
+- Laptop: save folder = `~/continuity`, Quick Save = on.
 
 ## 7. Syncthing-Fork
 - Grant "All files access": Settings → Privacy → Special app access → All files access → Syncthing-Fork.

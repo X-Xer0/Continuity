@@ -17,6 +17,15 @@
 ### Verified live — 2026-10-14 (phone steps done)
 - KDE Connect paired with "realme 5Pro"; protocol version 8 (AT-01)
 - ping, ring, and a test file share to the phone executed (AT-02/03/04)
-- Runcommand allowlist deployed (2 safe commands); share incoming_path -> `~/Downloads/continuity`
-- LocalSend: quick_save on, destination `~/Downloads/continuity`, tray-minimize, `--hidden` autostart
-- Syncthing: phone connected; folder `continuity` (`~/Sync/continuity`, sendreceive) shared — pending phone acceptance
+- Runcommand allowlist deployed (2 safe commands); share incoming_path -> `~/continuity`
+- LocalSend: quick_save on, destination `~/continuity`, tray-minimize, `--hidden` autostart
+
+### Changed — 2026-10-14 (evening)
+- Receive folder migrated `~/Downloads/continuity` -> `~/continuity` (per user request);
+  kdeconnect `incoming_path`, LocalSend destination, ck-menu, docs updated and verified live
+- Test results recorded in `docs/TEST_RESULTS.md`; rollback (`--restore`) + re-apply proven
+- Syncthing folder PAUSED on laptop: phone side pointed the share at its entire internal
+  storage (6,046 files / ~6.9 GB, 6,046 pull errors). Transfer stopped, nothing deleted.
+  Fix deferred by user: recreate folder pair with dedicated `Sync/continuity` path
+- AT-11 blocked: stale wireless-debug port (rotates); requires fresh pairing-dialog values
+

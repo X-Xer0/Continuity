@@ -186,14 +186,14 @@ else
     share_dir="$HOME/.config/kdeconnect/$id/kdeconnect_share"
     share_cfg="$share_dir/config"
     want="[General]
-incoming_path=$HOME/Downloads/continuity"
+incoming_path=$HOME/continuity"
     if [[ -f "$share_cfg" ]] && [[ "$(cat "$share_cfg")" == "$want" ]]; then
       say "ok (already current): $share_cfg"
     else
       say "would install: $share_cfg"
       backup "$share_cfg"
       if [[ "$MODE" == apply ]]; then
-        mkdir -p "$share_dir" "$HOME/Downloads/continuity"
+        mkdir -p "$share_dir" "$HOME/continuity"
         printf '%s\n' "$want" > "$share_cfg"
         changed=1
       fi
@@ -222,7 +222,7 @@ LS_PREF="$HOME/.local/share/org.localsend.localsend_app/shared_preferences.json"
 if [[ ! -f "$LS_PREF" ]]; then
   say "WARN: $LS_PREF not found (launch LocalSend once, then re-run); skipping"
 else
-  say "would set: quick_save=true, destination=$HOME/Downloads/continuity, minimize_to_tray=true"
+  say "would set: quick_save=true, destination=$HOME/continuity, minimize_to_tray=true"
   backup "$LS_PREF"
   if [[ "$MODE" == apply ]]; then
     out="$(python3 - "$LS_PREF" <<'PY'
@@ -231,7 +231,7 @@ p = pathlib.Path(sys.argv[1])
 d = json.loads(p.read_text())
 before = {k: d.get(k) for k in ("flutter.ls_quick_save", "flutter.ls_destination", "flutter.ls_minimize_to_tray")}
 d["flutter.ls_quick_save"] = True
-d["flutter.ls_destination"] = str(pathlib.Path.home() / "Downloads/continuity")
+d["flutter.ls_destination"] = str(pathlib.Path.home() / "continuity")
 d["flutter.ls_minimize_to_tray"] = True
 p.write_text(json.dumps(d, indent=4))
 after = {k: d.get(k) for k in before}

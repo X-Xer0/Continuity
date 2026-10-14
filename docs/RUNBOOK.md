@@ -10,7 +10,7 @@
 - Mirror phone screen → scrcpy (wireless)
 - Ring / Ping / Lock phone
 - Send SMS
-- Open receive folder (`~/Downloads/continuity`)
+- Open receive folder (`~/continuity`)
 - Syncthing dashboard (http://127.0.0.1:8384)
 - Run doctor
 
@@ -36,6 +36,6 @@ localsend-cli -f <file>   # TUI: pick the target device by number
 - Re-check Wireless debugging (port changes are normal).
 
 ## Receive folders
-- KDE Connect: configured in its settings (set it to `~/Downloads/continuity`)
-- LocalSend: `~/Downloads/continuity`
+- KDE Connect: configured in its settings (set it to `~/continuity`)
+- LocalSend: `~/continuity`
 - Syncthing: `~/Sync/continuity`

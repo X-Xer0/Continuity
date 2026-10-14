@@ -88,8 +88,8 @@ case "$choice" in
     notify-send -a continuity-kit "continuity-kit" "SMS handed to phone"
     ;;
   "Open receive folder")
-    mkdir -p "$HOME/Downloads/continuity"
-    xdg-open "$HOME/Downloads/continuity"
+    mkdir -p "$HOME/continuity"
+    xdg-open "$HOME/continuity"
     ;;
   "Syncthing dashboard")
     xdg-open "http://127.0.0.1:8384"
