@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# ck-menu — continuity-kit launcher (wofi/rofi dmenu).
+# Usage: ck-menu          (or bind it: SUPER SHIFT + P)
+set -euo pipefail
+
+resolve_device() {
+  local ids=()
+  mapfile -t ids < <(kdeconnect-cli -l --id-only 2>/dev/null || true)
+  ((${#ids[@]} == 1)) && echo "${ids[0]}"
+}
+
+choose() {
+  if command -v wofi >/dev/null 2>&1; then
+    wofi --show dmenu --prompt "Continuity" --width 420
+  elif command -v rofi >/dev/null 2>&1; then
+    rofi -dmenu -p "Continuity"
+  else
+    echo "ck-menu: need wofi or rofi" >&2
+    exit 1
+  fi
+}
+
+dev="$(resolve_device || true)"
+need_dev() {
+  if [[ -z "$dev" ]]; then
+    notify-send -a continuity-kit "continuity-kit" "No paired phone (see android/CHECKLIST.md)"
+    exit 0
+  fi
+}
+
+menu_items=(
+  "Send file(s) to phone"
+  "Send clipboard to phone"
+  "Send text to phone"
+  "Mirror phone screen"
+  "Ring phone"
+  "Ping phone"
+  "Lock phone"
+  "Send SMS"
+  "Open receive folder"
+  "Syncthing dashboard"
+  "Run doctor"
+)
+
+choice="$(printf '%s\n' "${menu_items[@]}" | choose)" || exit 0
+[[ -n "$choice" ]] || exit 0
+
+case "$choice" in
+  "Send file(s) to phone")
+    need_dev
+    mapfile -t files < <(zenity --file-selection --multiple --separator=$'\n' --title="Send to phone" 2>/dev/null || true)
+    ((${#files[@]})) || exit 0
+    "$HOME/.local/bin/ck-send" "${files[@]}"
+    ;;
+  "Send clipboard to phone")
+    need_dev
+    kdeconnect-cli -d "$dev" --send-clipboard
+    notify-send -a continuity-kit "continuity-kit" "Clipboard sent to phone"
+    ;;
+  "Send text to phone")
+    need_dev
+    txt="$(zenity --entry --title="Send text" --text="Text:" 2>/dev/null)" || exit 0
+    [[ -n "$txt" ]] || exit 0
+    kdeconnect-cli -d "$dev" --share-text "$txt"
+    ;;
+  "Mirror phone screen")
+    setsid -f "$HOME/.local/bin/ck-mirror" >/dev/null 2>&1
+    ;;
+  "Ring phone")
+    need_dev
+    kdeconnect-cli -d "$dev" --ring
+    ;;
+  "Ping phone")
+    need_dev
+    kdeconnect-cli -d "$dev" --ping
+    ;;
+  "Lock phone")
+    need_dev
+    kdeconnect-cli -d "$dev" --lock
+    ;;
+  "Send SMS")
+    need_dev
+    num="$(zenity --entry --title="Send SMS" --text="Phone number (+country code):" 2>/dev/null)" || exit 0
+    [[ -n "$num" ]] || exit 0
+    msg="$(zenity --entry --title="Send SMS" --text="Message:" 2>/dev/null)" || exit 0
+    [[ -n "$msg" ]] || exit 0
+    kdeconnect-cli -d "$dev" --send-sms "$msg" --destination "$num"
+    notify-send -a continuity-kit "continuity-kit" "SMS handed to phone"
+    ;;
+  "Open receive folder")
+    mkdir -p "$HOME/Downloads/continuity"
+    xdg-open "$HOME/Downloads/continuity"
+    ;;
+  "Syncthing dashboard")
+    xdg-open "http://127.0.0.1:8384"
+    ;;
+  "Run doctor")
+    "$HOME/.local/bin/ck-doctor" --notify
+    ;;
+esac

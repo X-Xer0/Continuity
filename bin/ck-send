@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# ck-send — share files/URLs to the paired phone via KDE Connect.
+# Usage: ck-send <file|URL> [more...]
+# Env:   CK_DEVICE=<id>  force a device when several are paired
+set -euo pipefail
+
+if [[ $# -lt 1 || "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  sed -n '2,4p' "$0"
+  exit 2
+fi
+
+resolve_device() {
+  if [[ -n "${CK_DEVICE:-}" ]]; then echo "$CK_DEVICE"; return 0; fi
+  local ids=()
+  mapfile -t ids < <(kdeconnect-cli -l --id-only 2>/dev/null || true)
+  if ((${#ids[@]} == 0)); then
+    echo "ck-send: no paired device. Pair first (see android/CHECKLIST.md)." >&2
+    return 1
+  fi
+  if ((${#ids[@]} > 1)); then
+    echo "ck-send: multiple devices paired; set CK_DEVICE to one of:" >&2
+    kdeconnect-cli -l --id-name-only >&2 || true
+    return 1
+  fi
+  echo "${ids[0]}"
+}
+
+dev="$(resolve_device)"
+for target in "$@"; do
+  echo "sending: $target"
+  kdeconnect-cli -d "$dev" --share "$target"
+done

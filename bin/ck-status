@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# ck-status — continuity status for waybar / terminal.
+# Usage: ck-status [--waybar | --json | --plain]
+# Env:  CK_ICON=<glyph or text> override the status glyph (default  mobile)
+set -euo pipefail
+
+mode=plain
+case "${1:-}" in
+  --waybar) mode=waybar ;;
+  --json)   mode=json ;;
+  --plain|"") mode=plain ;;
+  *) echo "usage: ck-status [--waybar|--json|--plain]" >&2; exit 2 ;;
+esac
+
+icon="${CK_ICON:-$'\uf3cd'}"
+
+paired=0 reachable=0 names=""
+if command -v kdeconnect-cli >/dev/null 2>&1; then
+  mapfile -t _paired < <(kdeconnect-cli -l --id-only 2>/dev/null || true)
+  paired=${#_paired[@]}
+  mapfile -t _reach < <(kdeconnect-cli -a --id-only 2>/dev/null || true)
+  reachable=${#_reach[@]}
+  names="$(kdeconnect-cli -l --name-only 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)"
+fi
+
+sync_state="$(systemctl --user is-active syncthing.service 2>/dev/null || true)"
+sync_state="${sync_state:-unknown}"
+
+if ((reachable > 0)); then
+  class=on
+elif ((paired > 0)); then
+  class=paired
+else
+  class=off
+fi
+
+tooltip="continuity: ${class}
+paired: ${paired}, reachable: ${reachable}"
+[[ -n "$names" ]] && tooltip="${tooltip}
+devices: ${names}"
+tooltip="${tooltip}
+syncthing: ${sync_state}"
+
+case "$mode" in
+  waybar)
+    tooltip="${tooltip//$'\n'/\\n}"
+    printf '{"text":"%s","class":"%s","tooltip":"%s"}\n' "$icon" "$class" "$tooltip"
+    ;;
+  json)
+    tooltip="${tooltip//$'\n'/\\n}"
+    printf '{"text":"%s","class":"%s","paired":%d,"reachable":%d,"syncthing":"%s","tooltip":"%s"}\n' \
+      "$icon" "$class" "$paired" "$reachable" "$sync_state" "$tooltip"
+    ;;
+  plain)
+    echo "status:    $class"
+    echo "paired:    $paired"
+    echo "reachable: $reachable"
+    [[ -n "$names" ]] && echo "devices:   $names"
+    echo "syncthing: $sync_state"
+    ;;
+esac

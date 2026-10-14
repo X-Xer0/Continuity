@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# ck-mirror — scrcpy wrapper for wireless mirroring of the phone.
+# Usage:
+#   ck-mirror                    mirror the single connected device (video only)
+#   ck-mirror --pair IP:PORT     pair using the code from the phone's wireless-debug screen
+#   ck-mirror --connect IP:PORT  connect over Wi-Fi
+#   ck-mirror --doctor           show adb device state
+#   ck-mirror --kill             stop the adb server
+#   ck-mirror --audio            enable audio forwarding
+#   extra args are passed through to scrcpy
+set -euo pipefail
+
+command -v adb >/dev/null 2>&1   || { echo "ck-mirror: adb missing (pacman -S android-tools)" >&2; exit 1; }
+command -v scrcpy >/dev/null 2>&1 || { echo "ck-mirror: scrcpy missing" >&2; exit 1; }
+
+audio=0
+declare -a scrcpy_args=()
+while (($#)); do
+  case "$1" in
+    --pair|--connect)
+      sub="$1"; shift
+      [[ $# -ge 1 ]] || { echo "ck-mirror: $sub needs IP:PORT" >&2; exit 2; }
+      if [[ "$sub" == "--pair" ]]; then adb pair "$1"; else adb connect "$1"; fi
+      exit 0 ;;
+    --doctor) adb devices -l; exit 0 ;;
+    --kill)   adb kill-server; echo "adb server stopped"; exit 0 ;;
+    --audio)  audio=1; shift ;;
+    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
+    *) scrcpy_args+=("$1"); shift ;;
+  esac
+done
+
+state="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')"
+if [[ -z "$state" ]]; then
+  cat >&2 <<'EOF'
+ck-mirror: no device connected over adb.
+  Phone: Settings -> Developer options -> Wireless debugging -> ON
+  First time: tap "Pair device with pairing code", then run:
+      ck-mirror --pair <IP:PAIR_PORT>
+  Then run:
+      ck-mirror --connect <IP:PORT>    (IP:PORT shown on the wireless-debug screen)
+EOF
+  exit 2
+fi
+
+args=(--max-size=1920 --max-fps=60)
+((audio)) || args+=(--no-audio)
+exec scrcpy "${args[@]}" "${scrcpy_args[@]}"
