@@ -26,10 +26,20 @@ LAN-only. No cloud accounts. No rooting/flashing.
 
 ## Repo layout
 
-See execution plan + `docs/RUNBOOK.md` (written in Phase 11).
-`install/apply-config.sh` is the ONLY writer of home configs; it backs up first and
+See execution plan + `docs/RUNBOOK.md`.
+`install/30-apply-config.sh` is the ONLY writer of home configs; it backs up first and
 supports `--dry-run` (default), `--apply`, `--restore`.
 
-## Status
+## Status (2026-10-14)
 
-Phase 00 in progress. See `docs/RECON.md`, `docs/DECISIONS.md`.
+- Phases done: 00 (scaffold/recon), 01 (packages verified), 02 (hypr/waybar/clipboard
+  integration applied), 03 (no active firewall; template shipped), 09 (ck-* tooling live)
+- Pending (needs the phone): 04 pairing, 05 LocalSend, 06 scrcpy wireless,
+  07 Syncthing pairing, 10 acceptance tests, 11 hardening sign-off
+- 08 (Quick Share interop): optional/deferred
+- Details: `docs/CAPABILITY_MATRIX.md`, `docs/TEST_RESULTS.md` (once tests run)
+
+### LocalSend CLI note
+`localsend-cli` is an interactive TUI: `localsend-cli -f <file>` then pick the device
+number. It is not a `send` subcommand.
+

@@ -28,3 +28,14 @@ If Phase 08 is attempted, prefer RQuickShare/Packet over pyquickshare
 ## ADR-006: swaync kept
 A notification daemon already runs (swaync). Do not install/replace it.
 KDE Connect actions surface through it.
+
+## ADR-007: LocalSend CLI is a TUI (2026-10-14)
+`localsend-cli` takes `-f <file>` and asks for the target device interactively.
+Wrappers must not assume a `send` subcommand. KDE Connect remains the scriptable
+sender (ck-send).
+
+## ADR-008: Quick Share interop deferred (2026-10-14)
+Phase 08 is optional and timeboxed. Native Android Sharesheet interop (r-quick-share)
+needs an AUR build + sudo and is brittle against GMS updates. LocalSend already covers
+the file-sharing need. Revisit only on explicit request.
+
