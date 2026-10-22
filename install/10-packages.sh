@@ -6,7 +6,7 @@
 set -euo pipefail
 
 BASE_PKGS=(
-  kdeconnect scrcpy android-tools syncthing
+  kdeconnect scrcpy android-tools
   wl-clipboard wl-clip-persist cliphist
   xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
   libei bluez bluez-utils pipewire wireplumber
@@ -25,7 +25,7 @@ mapfile -t AUR_MISSING  < <(missing "${AUR_PKGS[@]}")
 if ((${#BASE_MISSING[@]} == 0 && ${#AUR_MISSING[@]} == 0)); then
   echo "all continuity-kit packages present"
   echo "--- versions ---"
-  pacman -Q kdeconnect scrcpy android-tools syncthing wl-clip-persist localsend-bin 2>/dev/null || true
+  pacman -Q kdeconnect scrcpy android-tools wl-clip-persist localsend-bin 2>/dev/null || true
   exit 0
 fi
 
@@ -71,4 +71,4 @@ if ((${#AUR_MISSING[@]})); then
 fi
 
 echo
-echo "done. verify with: pacman -Q kdeconnect scrcpy android-tools syncthing"
+echo "done. verify with: pacman -Q kdeconnect scrcpy android-tools"

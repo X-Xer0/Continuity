@@ -12,10 +12,9 @@
 | AT-08 | Clipboard → laptop | Copy text on phone | `wl-paste` shows it on laptop (Linux-side sync may need focus) |
 | AT-09 | Notification + SMS | Trigger phone notification; reply to an SMS from laptop (`kdeconnect-sms` or the indicator) | Notification visible in swaync; reply delivered |
 | AT-10 | Run command | KDE Connect app → Run command → "Phone says hi" | Laptop notification appears; nothing else runs |
-| AT-11 | Mirror | `ck-mirror` (wireless adb set up) | Window appears; mouse+keyboard control works; close; `ck-mirror --kill` |
-| AT-12 | Syncthing | Create file in `~/Sync/continuity`; then delete it after sync | Syncs both ways ≤60 s; hashes match; deletion propagates |
+| AT-11 | Mirror | `ck-mirror` (USB preferred, else wireless adb) | Window appears; mouse+keyboard control works; close; `ck-mirror --kill` |
 | AT-13 | Doctor | `ck-doctor` | exit 0 (warnings allowed) |
-| AT-14 | Reboot persistence | Reboot; run AT-01 + AT-02 + AT-12 | All pass without manual steps |
+| AT-14 | Reboot persistence | Reboot; run AT-01 + AT-02 + AT-11 (USB) | All pass without manual steps |
 
 Notes:
 - AT-08 is subject to the documented Wayland clipboard limitation; if it fails, record as

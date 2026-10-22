@@ -11,11 +11,9 @@ Do the steps in order. The laptop is already configured.
 ## 2. Install the apps (F-Droid: https://f-droid.org — never random APK mirrors)
 1. **KDE Connect** (`org.kde.kdeconnect_tp`) — must be ≥ 1.34.4 (security fix).
 2. **LocalSend** (`org.localsend.localsend_app`).
-3. **Syncthing-Fork** — search exactly "Syncthing-Fork".
-   Do NOT install the old official "Syncthing" app (discontinued Dec 2024).
 
 ## 3. Battery + autostart (Realme UI kills background apps)
-For EACH of the three apps:
+For EACH app:
 - Settings → Battery → App Battery Management / Battery optimization → Don't optimize (allow background activity).
 - Settings → App Management → Auto-Start → enable.
 - Open the app once → open Recents → tap the app's ⋮ menu → Lock (padlock).
@@ -37,22 +35,15 @@ For EACH of the three apps:
 ## 6. LocalSend
 - Open on both devices; they discover each other automatically.
 - Phone: set a clear device name; enable PIN if offered.
-- Laptop: save folder = `~/continuity`, Quick Save = on.
+- Laptop: save folder = `~/continuity`, Quick Save = on (managed by the repo).
 
-## 7. Syncthing-Fork
-- Grant "All files access": Settings → Privacy → Special app access → All files access → Syncthing-Fork.
-- Same battery/autostart treatment as step 3.
-- Laptop shows its ID at: `http://127.0.0.1:8384` → Actions → Show ID
-  (or terminal: `syncthing device-id`).
-- Phone: Devices → + → scan the QR shown on the laptop (or paste the ID). Accept on laptop.
-- Folder to share: laptop `~/Sync/continuity` ⇄ phone internal storage `Sync/continuity`.
-
-## 8. Wireless debugging (needed for phone screen mirroring)
+## 7. Wireless debugging (needed for phone screen mirroring without a cable)
 - Settings → About device → Version → tap "Build number" 7 times.
 - Settings → Additional settings/System → Developer options → Wireless debugging → ON.
 - Leave the phone on this screen when the agent asks for pairing.
+- `USB debugging` in the same screen enables the cable path (`ck-mirror --usb`).
 
-## 9. What to report back to the agent
+## 8. What to report back to the agent
 - Confirm each app is installed + its version (KDE Connect shows it in ⋮ → About).
-- Say "paired" once step 5 is accepted, and "syncthing paired" once step 7 is done.
-- The agent will then run the verification gates and request the AT tests.
+- Say "paired" once step 5 is accepted.
+- The agent will then run the verification gates and request the acceptance tests.

@@ -39,3 +39,10 @@ Phase 08 is optional and timeboxed. Native Android Sharesheet interop (r-quick-s
 needs an AUR build + sudo and is brittle against GMS updates. LocalSend already covers
 the file-sharing need. Revisit only on explicit request.
 
+## ADR-009: Syncthing support removed (2026-10-22)
+The user uninstalled the phone app (judged not useful). The sync plane is dropped from
+the stack; scripts, menu, status, doctor, firewall rules, docs and tests no longer
+reference it. The laptop package was left installed but the user service is disabled;
+`~/Sync/continuity` content is NOT deleted. File movement is covered by KDE Connect and
+LocalSend. Supersedes the sync part of ADR-003.
+

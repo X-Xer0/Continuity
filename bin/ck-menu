@@ -38,7 +38,6 @@ menu_items=(
   "Lock phone"
   "Send SMS"
   "Open receive folder"
-  "Syncthing dashboard"
   "Run doctor"
 )
 
@@ -90,9 +89,6 @@ case "$choice" in
   "Open receive folder")
     mkdir -p "$HOME/continuity"
     xdg-open "$HOME/continuity"
-    ;;
-  "Syncthing dashboard")
-    xdg-open "http://127.0.0.1:8384"
     ;;
   "Run doctor")
     "$HOME/.local/bin/ck-doctor" --notify

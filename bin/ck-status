@@ -23,9 +23,6 @@ if command -v kdeconnect-cli >/dev/null 2>&1; then
   names="$(kdeconnect-cli -l --name-only 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)"
 fi
 
-sync_state="$(systemctl --user is-active syncthing.service 2>/dev/null || true)"
-sync_state="${sync_state:-unknown}"
-
 if ((reachable > 0)); then
   class=on
 elif ((paired > 0)); then
@@ -38,8 +35,6 @@ tooltip="continuity: ${class}
 paired: ${paired}, reachable: ${reachable}"
 [[ -n "$names" ]] && tooltip="${tooltip}
 devices: ${names}"
-tooltip="${tooltip}
-syncthing: ${sync_state}"
 
 case "$mode" in
   waybar)
@@ -48,14 +43,13 @@ case "$mode" in
     ;;
   json)
     tooltip="${tooltip//$'\n'/\\n}"
-    printf '{"text":"%s","class":"%s","paired":%d,"reachable":%d,"syncthing":"%s","tooltip":"%s"}\n' \
-      "$icon" "$class" "$paired" "$reachable" "$sync_state" "$tooltip"
+    printf '{"text":"%s","class":"%s","paired":%d,"reachable":%d,"tooltip":"%s"}\n' \
+      "$icon" "$class" "$paired" "$reachable" "$tooltip"
     ;;
   plain)
     echo "status:    $class"
     echo "paired:    $paired"
     echo "reachable: $reachable"
     [[ -n "$names" ]] && echo "devices:   $names"
-    echo "syncthing: $sync_state"
     ;;
 esac

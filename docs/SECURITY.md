@@ -6,7 +6,7 @@ Threat model: trusted home LAN. Nothing here is safe on hostile networks.
 - KDE Connect desktop ≥ 25.12 (CVE-2025-66270 auth bypass, CVE-2025-32900 spoofing).
   This machine: 26.08.2 ✔
 - KDE Connect Android ≥ 1.34.4 (same fixes). Verify on phone.
-- Keep KDE Connect, LocalSend, scrcpy, syncthing updated (monthly `pacman -Syu`).
+- Keep KDE Connect, LocalSend, scrcpy updated (monthly `pacman -Syu`).
 
 ## Rules enforced by this repo
 - LAN-only designs; no cloud accounts or relays.
@@ -22,7 +22,7 @@ Threat model: trusted home LAN. Nothing here is safe on hostile networks.
 - Backups: `install/30-apply-config.sh --restore` tested once before declaring v1.0.
 
 ## Trusted components
-Installed from official repos / AUR: kdeconnect, scrcpy, android-tools, syncthing,
+Installed from official repos / AUR: kdeconnect, scrcpy, android-tools,
 wl-clipboard/persist, cliphist, zenity, sshfs, localsend-bin, localsend-cli-bin.
 
 ## Fallback component requiring explicit approval

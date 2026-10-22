@@ -22,9 +22,6 @@ if ((ufw_active)); then
   sudo ufw allow 1714:1764/udp comment 'kdeconnect'
   sudo ufw allow 53317/tcp comment 'localsend'
   sudo ufw allow 53317/udp comment 'localsend'
-  sudo ufw allow 22000/tcp comment 'syncthing'
-  sudo ufw allow 22000/udp comment 'syncthing'
-  sudo ufw allow 21027/udp comment 'syncthing-discovery'
 EOF
   if ((YES)); then
     sudo -v
@@ -32,9 +29,6 @@ EOF
     sudo ufw allow 1714:1764/udp comment 'kdeconnect'
     sudo ufw allow 53317/tcp comment 'localsend'
     sudo ufw allow 53317/udp comment 'localsend'
-    sudo ufw allow 22000/tcp comment 'syncthing'
-    sudo ufw allow 22000/udp comment 'syncthing'
-    sudo ufw allow 21027/udp comment 'syncthing-discovery'
     sudo ufw status numbered
   fi
 elif ((fw_active)); then
@@ -42,16 +36,12 @@ elif ((fw_active)); then
   cat <<'EOF'
   sudo firewall-cmd --permanent --add-port=1714-1764/tcp --add-port=1714-1764/udp
   sudo firewall-cmd --permanent --add-port=53317/tcp --add-port=53317/udp
-  sudo firewall-cmd --permanent --add-port=22000/tcp --add-port=22000/udp
-  sudo firewall-cmd --permanent --add-port=21027/udp
   sudo firewall-cmd --reload
 EOF
   if ((YES)); then
     sudo -v
     sudo firewall-cmd --permanent --add-port=1714-1764/tcp --add-port=1714-1764/udp
     sudo firewall-cmd --permanent --add-port=53317/tcp --add-port=53317/udp
-    sudo firewall-cmd --permanent --add-port=22000/tcp --add-port=22000/udp
-    sudo firewall-cmd --permanent --add-port=21027/udp
     sudo firewall-cmd --reload
     sudo firewall-cmd --list-ports
   fi

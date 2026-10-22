@@ -38,13 +38,6 @@
   then `ck-mirror --connect <phone-ip>:5555` (documented fallback).
 - Hygiene: `ck-mirror --kill` (stops adb server) when done.
 
-## Syncthing
-- **Phone shows "0/0" or won't sync**: battery/autostart settings again (both ends);
-  check `systemctl --user status syncthing` on laptop.
-- **Device not connecting**: both must have each other added; check the other side's
-  "Pending devices" and accept.
-- **Default folder**: laptop `~/Sync/continuity`; phone `Sync/continuity` under internal storage.
-
 ## Waybar
 - **Module shows a box glyph**: the nerd-font glyph may be missing. Run
   `CK_ICON=PH ck-status --waybar` to test a text fallback, then set the icon in

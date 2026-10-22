@@ -222,7 +222,7 @@ LS_PREF="$HOME/.local/share/org.localsend.localsend_app/shared_preferences.json"
 if [[ ! -f "$LS_PREF" ]]; then
   say "WARN: $LS_PREF not found (launch LocalSend once, then re-run); skipping"
 else
-  say "would set: quick_save=true, destination=$HOME/continuity, minimize_to_tray=true"
+  say "would set: quick_save=on (QuickSaveMode), destination=$HOME/continuity, minimize_to_tray=true"
   backup "$LS_PREF"
   if [[ "$MODE" == apply ]]; then
     out="$(python3 - "$LS_PREF" <<'PY'
@@ -230,9 +230,13 @@ import json, pathlib, sys
 p = pathlib.Path(sys.argv[1])
 d = json.loads(p.read_text())
 before = {k: d.get(k) for k in ("flutter.ls_quick_save", "flutter.ls_destination", "flutter.ls_minimize_to_tray")}
-d["flutter.ls_quick_save"] = True
+# LocalSend expects: quick_save = QuickSaveMode string (off|on|paired),
+# destination = string, minimize_to_tray = bool. Writing a bool for quick_save
+# crashes the app at startup ("type 'bool' is not a subtype of type 'String?'").
+d["flutter.ls_quick_save"] = "on"
 d["flutter.ls_destination"] = str(pathlib.Path.home() / "continuity")
 d["flutter.ls_minimize_to_tray"] = True
+assert isinstance(d["flutter.ls_quick_save"], str)
 p.write_text(json.dumps(d, indent=4))
 after = {k: d.get(k) for k in before}
 print(("changed" if before != after else "no change needed") + f": {after}")

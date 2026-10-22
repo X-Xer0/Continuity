@@ -31,6 +31,19 @@ _notif_ok()   { pgrep -x swaync >/dev/null || pgrep -x mako >/dev/null || pgrep 
 _clip_ok()    { printf x | wl-copy && [[ "$(wl-paste 2>/dev/null)" == x ]]; }
 _ports_ok()   { systemctl --user is-active --quiet xdg-desktop-portal \
                 && systemctl --user is-active --quiet xdg-desktop-portal-hyprland; }
+_ls_prefs_ok() {
+  local f="$HOME/.local/share/org.localsend.localsend_app/shared_preferences.json"
+  [[ -f "$f" ]] || return 0
+  python3 - "$f" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+qs = d.get("flutter.ls_quick_save")
+dest = d.get("flutter.ls_destination")
+mt = d.get("flutter.ls_minimize_to_tray")
+ok = (qs is None or isinstance(qs, str)) and (dest is None or isinstance(dest, str)) and (mt is None or isinstance(mt, bool))
+sys.exit(0 if ok else 1)
+PY
+}
 
 _run  "kdeconnectd running"  pgrep -x kdeconnectd
 _run  "phone paired"         _dev_paired
@@ -38,7 +51,7 @@ _runw "phone reachable"      _dev_reach
 _run  "notification daemon"  _notif_ok
 _run  "clipboard round-trip" _clip_ok
 _run  "desktop portals"      _ports_ok
-_run  "syncthing service"    systemctl --user is-active --quiet syncthing.service
+_run  "localsend prefs"      _ls_prefs_ok
 
 fw="none"
 systemctl is-active --quiet ufw 2>/dev/null && fw="ufw"

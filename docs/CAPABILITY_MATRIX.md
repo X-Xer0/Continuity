@@ -4,7 +4,7 @@
 |---|---|---|---|
 | File share phone↔laptop (any type) | ✔ works | KDE Connect share + LocalSend | both directions; no internet needed |
 | Large file transfer | ✔ works | LocalSend (or KDE Connect) | max Wi-Fi speed |
-| Background folder sync (photos/docs) | ✔ works | Syncthing + Syncthing-Fork | continuous, versioned |
+| Background folder sync (photos/docs) | — removed | (Syncthing support dropped 2026-10-22) | feature removed at user request |
 | Notification mirroring | ✔ works | KDE Connect | shown via swaync |
 | Reply to SMS from laptop | ✔ works | KDE Connect (+kdeconnect-sms) | SMS only; app must allow RemoteInput for richer replies |
 | Send SMS from laptop | ✔ works | KDE Connect | via ck-menu |

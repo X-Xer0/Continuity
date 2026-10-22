@@ -32,13 +32,13 @@ pkg() { pacman -Q "$@" 2>&1 || true; }
 
   echo
   echo "== packages =="
-  pkg kdeconnect scrcpy android-tools syncthing wl-clipboard cliphist wl-clip-persist \
+  pkg kdeconnect scrcpy android-tools wl-clipboard cliphist wl-clip-persist \
       zenity sshfs bluez bluez-utils pipewire wireplumber \
       xdg-desktop-portal-hyprland xdg-desktop-portal-gtk libei shellcheck
 
   echo
   echo "== user services =="
-  for u in xdg-desktop-portal xdg-desktop-portal-hyprland syncthing.service; do
+  for u in xdg-desktop-portal xdg-desktop-portal-hyprland; do
     printf '%-32s %s\n' "$u" "$(systemctl --user is-active "$u" 2>/dev/null || true)"
   done
 
@@ -65,7 +65,7 @@ pkg() { pacman -Q "$@" 2>&1 || true; }
 
   echo
   echo "== tools =="
-  for t in yay paru nft ufw firewall-cmd adb scrcpy syncthing kdeconnect-cli wl-copy wofi rofi localsend localsend-cli; do
+  for t in yay paru nft ufw firewall-cmd adb scrcpy kdeconnect-cli wl-copy wofi rofi localsend localsend-cli; do
     printf '%-16s %s\n' "$t" "$(have "$t")"
   done
 

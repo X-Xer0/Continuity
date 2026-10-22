@@ -1,10 +1,10 @@
-# ARCHITECTURE — four planes, all LAN-only
+# ARCHITECTURE — three planes, all LAN-only
 
 ```
                     ┌────────────────────────────┐
                     │        Realme 5 Pro        │
                     │  KDE Connect / LocalSend / │
-                    │  Syncthing-Fork / adb      │
+                    │  adb                       │
                     └───────┬────────┬───────────┘
                             │  Wi-Fi LAN (or phone hotspot / USB tether)
    ┌────────────────────────┴────────┴──────────────────────────┐
@@ -15,9 +15,7 @@
    │                                                            │
    │  DATA     localsend(-cli) (TCP/UDP 53317)  big files       │
    │                                                            │
-   │  PIXEL    adb + scrcpy  (wireless debugging)  mirroring    │
-   │                                                            │
-   │  SYNC     syncthing.service (user)  TCP 22000 / UDP 21027  │
+   │  PIXEL    adb + scrcpy  (USB or wireless debugging)        │
    │                                                            │
    │  UX       ck-menu (rofi/wofi) · ck-status (waybar) ·       │
    │           ck-doctor · ck-send · ck-mirror                  │
@@ -26,9 +24,10 @@
 
 ## Design rules
 - Compose existing tools; no custom protocols or crypto (ADR-002).
-- All four planes are independent: if one breaks, the others keep working.
+- All three planes are independent: if one breaks, the others keep working.
 - The only writer of home configs is `install/30-apply-config.sh` (backup + restore).
 - Phone side is stock Android 11, no root, no custom ROM (ADR-001 scope).
+- Syncthing support was removed on 2026-10-22 (ADR-009).
 
 ## Repo map
 - `install/` idempotent setup scripts (preflight, packages, firewall, apply, uninstall)

@@ -29,7 +29,7 @@ case "$mode" in
     cat <<'EOF'
 # Removal commands (run manually if you really want them gone):
 yay -Rns localsend-bin localsend-cli-bin 2>/dev/null || true
-sudo pacman -Rns kdeconnect scrcpy android-tools syncthing wl-clip-persist \
+sudo pacman -Rns kdeconnect scrcpy android-tools wl-clip-persist \
   zenity sshfs shellcheck 2>/dev/null || true
 # keep: wl-clipboard, cliphist, portals, bluez, pipewire (used by your desktop too)
 EOF

@@ -37,3 +37,15 @@
 - Repo scrubbed of local IPs / device serials before the public push
 - Pushed to `github.com:X-Xer0/Continuity` (main + tag v0.9.1)
 
+### Changed — 2026-10-22 (v0.9.2)
+- **Fixed LocalSend startup crash**: `ls_quick_save` is a QuickSaveMode string
+  (`off|on|paired`), not a bool. The apply script wrote `true`, producing
+  "type 'bool' is not a subtype of type 'String?'" on every login. It now writes `"on"`;
+  a `ck-doctor` check validates the preference types; the live prefs file was repaired
+  and LocalSend startup verified clean.
+- **Removed Syncthing support** (user uninstalled the phone app): packages list, firewall
+  rules (ufw/firewalld/nftables), preflight, ck-status, ck-doctor, ck-menu, uninstall
+  helper, android checklist, README/architecture/capability/runbook/security/
+  troubleshooting/acceptance docs. Laptop service disabled; no data deleted.
+- Tagged v0.9.2 and pushed to GitHub.
+
